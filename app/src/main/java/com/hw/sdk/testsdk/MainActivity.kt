@@ -1,6 +1,7 @@
 package com.hw.sdk.testsdk
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,6 +18,10 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        MySdk.hello()
+        Log.i(TAG, "MySdk.hello() = ${MySdk.hello()}")
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }
