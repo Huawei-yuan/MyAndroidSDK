@@ -35,6 +35,13 @@ android {
     }
 }
 
+// 👇 将 configurations 块放在这里
+configurations {
+    all {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+}
+
 dependencies {
 //    implementation(project(":mylibrary"))
     implementation(project(":analytics"))

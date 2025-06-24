@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.hw.sdk.analytics.AnalyticsSDK
 import com.hw.sdk.mylibrary.MySdk
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +20,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         Log.i(TAG, "MySdk.hello() = ${MySdk.hello()}")
+
+        AnalyticsSDK.track("MainActivity_onCreate", mapOf(
+            "content_type" to "article",
+            "content_id" to "article_123",
+            "share_method" to "native"
+        ))
     }
 
     companion object {
