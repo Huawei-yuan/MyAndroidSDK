@@ -22,21 +22,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.InternalSerializationApi
 
-class AnalyticsSDK private constructor() {
-    companion object {
-        @Volatile
-        private var INSTANCE: AnalyticsSDK? = null
-
-        fun getInstance(): AnalyticsSDK {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: AnalyticsSDK().also { INSTANCE = it }
-            }
-        }
-    }
+object AnalyticsSDK {
 
     private var config: AnalyticsConfig? = null
     private var eventCollector: EventCollector? = null
     private var dataUploader: DataUploader? = null
+    @Volatile
     private var isInitialized = false
 
     // 协程作用域
@@ -44,24 +35,24 @@ class AnalyticsSDK private constructor() {
         SupervisorJob() + Dispatchers.IO + CoroutineName("AnalyticsSDK")
     )
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun init(context: Context, block: AnalyticsConfigBuilder.() -> Unit) {
         if (isInitialized) return
 
         // 使用DSL构建配置
         this.config = AnalyticsConfigBuilder().apply(block).build()
 
+        val appContext = context.applicationContext
+
         // 初始化组件
-        val database = EventDatabase.getInstance(context)
-        this.eventCollector = EventCollector(context, config!!, database)
-        this.dataUploader = DataUploader(context, config!!, database)
+        val database = EventDatabase.getInstance(appContext)
+        this.eventCollector = EventCollector(appContext, config!!, database)
+        this.dataUploader = DataUploader(appContext, config!!, database)
 
         // 启动定时上报
         startScheduledUpload()
         isInitialized = true
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun track(eventName: String, properties: Map<String, Any> = emptyMap()) {
         if (!isInitialized) {
             logWarning("SDK not initialized")
@@ -73,7 +64,6 @@ class AnalyticsSDK private constructor() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun setUserProperties(properties: Map<String, Any>) {
         if (!isInitialized) return
 

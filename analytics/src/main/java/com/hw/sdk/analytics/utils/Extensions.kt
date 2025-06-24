@@ -12,7 +12,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
+import com.hw.sdk.analytics.BuildConfig
 import com.hw.sdk.analytics.models.DeviceInfo
 import com.hw.sdk.analytics.models.Event
 import com.hw.sdk.analytics.storage.EventEntity
@@ -31,13 +31,14 @@ import java.util.Locale
 import java.util.TimeZone
 
 // Context扩展
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 fun Context.getDeviceInfo(): DeviceInfo {
     val displayMetrics = resources.displayMetrics
     val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+    // 推荐用 ANDROID_ID
+    val deviceId = getRealDeviceId()
 
     return DeviceInfo(
-        deviceId = deviceId.toString(),
+        deviceId = deviceId,
         osVersion = Build.VERSION.RELEASE,
         appVersion = getAppVersion(),
         manufacturer = Build.MANUFACTURER,
@@ -49,6 +50,22 @@ fun Context.getDeviceInfo(): DeviceInfo {
         language = Locale.getDefault().language,
         timezone = TimeZone.getDefault().id
     )
+}
+
+fun Context.getRealDeviceId(): String {
+    // 1. 优先用 ANDROID_ID
+    val androidId = android.provider.Settings.Secure.getString(contentResolver, android.provider.Settings.Secure.ANDROID_ID)
+    if (!androidId.isNullOrEmpty() && androidId != "9774d56d682e549c") {
+        return androidId
+    }
+    // 2. 退化为自定义 UUID（本地持久化）
+    val prefs = getSharedPreferences("analytics", Context.MODE_PRIVATE)
+    var uuid = prefs.getString("uuid", null)
+    if (uuid == null) {
+        uuid = java.util.UUID.randomUUID().toString()
+        prefs.edit().putString("uuid", uuid).apply()
+    }
+    return uuid
 }
 
 fun getAppVersion(): String {

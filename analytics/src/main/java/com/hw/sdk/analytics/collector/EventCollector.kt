@@ -3,8 +3,6 @@
 package com.hw.sdk.analytics.collector
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.hw.sdk.analytics.config.AnalyticsConfig
 import com.hw.sdk.analytics.models.DeviceInfo
 import com.hw.sdk.analytics.models.Event
@@ -19,7 +17,6 @@ import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.JsonElement
 import java.util.concurrent.ConcurrentHashMap
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 class EventCollector(
     private val context: Context,
     private val config: AnalyticsConfig,

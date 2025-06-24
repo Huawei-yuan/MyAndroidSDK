@@ -1,3 +1,5 @@
+@file:OptIn(InternalSerializationApi::class)
+
 package com.hw.sdk.analytics.processor
 
 import android.util.Base64
@@ -6,6 +8,7 @@ import com.hw.sdk.analytics.models.Event
 import com.hw.sdk.analytics.utils.logError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.JsonPrimitive
 import java.security.SecureRandom
 import javax.crypto.Cipher

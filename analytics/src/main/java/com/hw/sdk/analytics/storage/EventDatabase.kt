@@ -29,7 +29,6 @@ abstract class EventDatabase : RoomDatabase() {
                     EventDatabase::class.java,
                     "analytics_database"
                 ).apply {
-                    setJournalMode(RoomDatabase.JournalMode.WAL) // 启用WAL模式
                     setQueryExecutor(Dispatchers.IO.asExecutor())
                 }.build().also { INSTANCE = it }
             }
